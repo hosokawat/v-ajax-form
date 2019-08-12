@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.0/axios.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.6.10/vue.min.js"></script>
+  <script src="v-ajax-form.js"></script>
+  <title>v-ajax-form example</title>
+</head>
+
+<body>
+  <div id="app">
+    <h1>Bookサーチ</h1>
+    <v-ajax-form action='https://api.openbd.jp/v1/get' method='get' @receive='receive' @done='done' @fail='fail'
+      @start='start'>
+      <label for='isbn'>ISBN&nbsp;</label><input name='isbn' value='9784560090008'>
+      <input type="submit" value='調べる'><br>
+    </v-ajax-form>
+    <pre>
+        キャッチャー・イン・ザ・ライ : 9784560090008
+        星の王子様 : 9784102122044
+        失われた世界 : 9784488608026
+        夜のピクニック : 9784101234175
+        サピエンス全史 : 9784309226712
+        ゼロからトースターを作ってみた結果 : 9784102200025
+    </pre>
+    <hr>
+    <div>タイトル：&nbsp;<span>{{title}}</span></div>
+    <div>著者：&nbsp;<span>{{auther}}</span></div>
+    <hr>
+    <div>state</div>
+    <div>{{message}}</div>
+  </div>
+
+  <script>
+    Vue.use(VAjaxForm);
+
+    var app = new Vue({
+      el: '#app',
+      data: {
+        title: '',
+        auther: '',
+        message: '[init]'
+
+      }, methods: {
+        start: function (params) {
+          this.state_logging('start');
+          console.log('1.start')
+        },
+        receive: function (res) {
+          try {
+            this.title = res.data[0].summary.title;
+            this.auther = res.data[0].summary.author;
+          } catch (err) {
+            this.title = 'そんなものない';
+            this.auther = 'よみ人しらず';
+
+          }
+          this.state_logging('success');
+          console.log('2.success')
+        }, fail: function (e) {
+          this.state_logging('fail');
+          console.log('2.fail')
+        }, done: function (e) {
+          this.state_logging('done');
+          console.log('3.done')
+        }, state_logging: function (state) {
+          if (this.message.length > 200) {
+            this.message = ''
+          }
+          this.message += `-> [${state}]`;
+
+        }
+      }
+    })
+  </script>
+</body>
+
+</html>
