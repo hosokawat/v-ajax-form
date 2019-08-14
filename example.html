@@ -33,6 +33,13 @@
     <hr>
     <div>state</div>
     <div>{{message}}</div>
+    <hr>
+    <pre>
+      このページはバックエンドに
+      株式会社カーリル様(https://calil.jp)が提供してい
+      openBDプロジェクト「書誌情報の取得API」(https://openbd.jp)を利用しています。
+      この場を借りてお礼申し上げます。ありがとうございます。
+    </pre>
   </div>
 
   <script>
@@ -44,7 +51,6 @@
         title: '',
         auther: '',
         message: '[init]'
-
       }, methods: {
         start: function (params) {
           this.state_logging('start');
@@ -57,11 +63,12 @@
           } catch (err) {
             this.title = 'そんなものない';
             this.auther = 'よみ人しらず';
-
           }
           this.state_logging('success');
           console.log('2.success')
         }, fail: function (e) {
+          this.title = 'リクエスト失敗';
+          this.auther = '';
           this.state_logging('fail');
           console.log('2.fail')
         }, done: function (e) {
