@@ -35,7 +35,7 @@ masterブランチの最新版をダウンロードしてください。
 headタグ内に次のコードを貼り付けてください。
 ``` html
 <script src='https://cdn.jsdelivr.net/npm/axios@0.19.0/dist/axios.min.js'></script>
-<script src='https://cdn.jsdelivr.net/gh/hosokawat/v-ajax-form@master/v-ajax-form.js'></script>
+<script src='https://cdn.jsdelivr.net/gh/hosokawat/v-ajax-form/v-ajax-form.js'></script>
 ```
 
 ## サンプルコード
