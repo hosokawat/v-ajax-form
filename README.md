@@ -3,8 +3,10 @@
 
 v-ajax-formは、Vue.jsのカスタムエレメントです。
 formタグを置き換えることで非同期通信処理を実現します。
+
 サーバからの応答はディスパッチされるformタグのイベントに、
 コールバックメソッドを設定することで処理することができます。
+
 HTMLと最低限のVue.jsを理解していれば、学習コストゼロで使えることを目指しました。
 
 ## 背景
@@ -44,13 +46,15 @@ headタグ内に次のコードを貼り付けてください。
 
 [jsfiddle](https://jsfiddle.net/hosokawat/tfhn2cp3/)
 
-株式会社カーリル様(https://calil.jp)が提供してい
-openBDプロジェクト「書誌情報の取得API」(https://openbd.jp)をバックエンドに利用しました。
+株式会社カーリル様(https://calil.jp)が提供している、
+
+openBDプロジェクトの「[書誌情報の取得API](https://openbd.jp)」をバックエンドに利用しました。
+
 この場を借りてお礼申し上げます。ありがとうございます。
 
 ## 使い方
 
-“/request”に対してpostメソッドでparam1の値を送信するHTMLコードは次のように記述できます。
+**/request**に対してpostメソッドでparam1の値を送信するHTMLコードは次のように記述できます。
 
 ``` html
 <form action=‘/request’ method=‘post’>
@@ -58,8 +62,9 @@ openBDプロジェクト「書誌情報の取得API」(https://openbd.jp)をバ�
     <input type=‘submit’ value=‘送信’>
 </form>
 ```
+上記コードによるフォームは通信時に画面遷移を伴います。
 
-v-ajax-formを利用すると、同様の条件で非同期通信を行うHTMLコードは次のように記述できます。
+そして、**v-ajax-form**を利用すると、同様の条件で非同期通信を行うフォームを次のように記述できます。
 
 ``` html
 <v-ajax-form action=‘/request’ method=‘post’>
@@ -69,6 +74,7 @@ v-ajax-formを利用すると、同様の条件で非同期通信を行うHTML�
 ```
 
 上記コードでは非同期通信処理のサーバ応答を処理するコードが含まれていません。
+
 サーバからの応答を処理するためのコールバック関数はイベントリスナーとして登録することができます。
 
 ``` html
@@ -114,6 +120,7 @@ v-ajax-form
 
 ### イベント
 v-ajax-formタグはformタグにリプレースされ、formのsubmitのリスナーを非同期処理に置き換えます。
+
 非同期通信処理の進捗に伴い、次のイベントが順番にディスパッチされます。
 
 [start] -> [receive または fail] -> [done]
