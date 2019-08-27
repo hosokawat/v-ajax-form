@@ -20,7 +20,10 @@ const VAjaxForm = {
                 }, submit: function () {
                     let params = {};
                     for (let el of this.$el.querySelectorAll('input,select,textarea')) {
-                        if ((typeof el.attributes['disabled'] == 'undefined') && (typeof el.attributes['name'] != 'undefined')) {
+                        if ((typeof el.attributes['disabled'] == 'undefined')
+                            && (typeof el.attributes['name'] != 'undefined')
+                        ) {
+                            if (el.type == 'radio' && !el.checked) continue;
                             let val = el.value;
                             let name = el.attributes['name'].value;
                             params[name] = val;
