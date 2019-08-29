@@ -1,0 +1,25 @@
+{
+  "name": "v-ajax-form",
+  "version": "1.0.0",
+  "description": "vue.js component plug-in to make Form tag compatible with ajax request",
+  "main": "v-ajax-form.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://hosokawat@github.com/hosokawat/v-ajax-form.git"
+  },
+  "keywords": [
+    "Vue.js"
+  ],
+  "author": "Takahiro Hosokawa",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/hosokawat/v-ajax-form/issues"
+  },
+  "homepage": "https://github.com/hosokawat/v-ajax-form#readme",
+  "dependencies": {
+    "vue": "^2.6.10"
+  }
+}
