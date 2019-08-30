@@ -25,7 +25,7 @@ Formタグと同じインターフェースで非同期通信処理を実現す�
 
 ## インストール
 
-2つの方法を用意しています。
+3つの方法を用意しています。
 通信に必要な実装はaxiosに移譲しています(餅は餅屋ということで)。合わせてロードしてください。
 
 ### ダウンロード
@@ -41,6 +41,13 @@ headタグ内に次のコードを貼り付けてください。
 <script src='https://cdn.jsdelivr.net/npm/axios@0.19.0/dist/axios.min.js'></script>
 <script src='https://cdn.jsdelivr.net/gh/hosokawat/v-ajax-form/v-ajax-form.min.js'></script>
 ```
+
+### npm
+axiosも一緒に落ちてきます。
+``` bash
+npm install v-ajax-form
+```
+
 
 ## サンプルコード
 
