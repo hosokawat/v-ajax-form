@@ -1,5 +1,6 @@
 # v-ajax-form
 [![MIT License](http://img.shields.io/badge/license-MIT-blue.svg?style=flat)](LICENSE)
+[![npm version](https://badge.fury.io/js/v-ajax-form.svg)](https://badge.fury.io/js/v-ajax-form)
 ## はじめに
 
 v-ajax-formは、Vue.jsのカスタムエレメントです。
