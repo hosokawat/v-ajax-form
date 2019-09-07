@@ -1,4 +1,4 @@
-import vue from 'rollup-plugin-vue'; // .vueファイルimport用
+import vue from 'rollup-plugin-vue';
 import commonjs from 'rollup-plugin-commonjs';
 import buble from 'rollup-plugin-buble';
 
@@ -12,6 +12,6 @@ export default {
   plugins: [
     commonjs(),
     vue(),
-    buble(), // ES5 へトランスパイルする
+    buble(),
   ],
 };
