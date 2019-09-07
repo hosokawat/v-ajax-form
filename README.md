@@ -42,7 +42,7 @@ masterブランチの最新版をダウンロードしてください。
 headタグ内に次のコードを貼り付けてください。
 ``` html
 <script src='https://cdn.jsdelivr.net/npm/axios@0.19.0/dist/axios.min.js'></script>
-<script src='https://cdn.jsdelivr.net/gh/hosokawat/v-ajax-form@v1.0.2/v-ajax-form.min.js'></script>
+<script src='https://cdn.jsdelivr.net/gh/hosokawat/v-ajax-form@v1.0.3/v-ajax-form.min.js'></script>
 ```
 
 ### npm
