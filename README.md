@@ -58,7 +58,7 @@ npm install v-ajax-form
 
 [jsfiddle](https://jsfiddle.net/hosokawat/tfhn2cp3/)
 
-株式会社カーリル様(https://calil.jp)が提供している、
+株式会社カーリル様(https://calil.jp) が提供している、
 
 openBDプロジェクトの「[書誌情報の取得API](https://openbd.jp)」をバックエンドに利用しました。
 
@@ -97,7 +97,6 @@ openBDプロジェクトの「[書誌情報の取得API](https://openbd.jp)」�
 ```
 
 ``` javascript
-
 methods: {
     receive: function(res){
         // print out server response
