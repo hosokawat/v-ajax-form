@@ -7,7 +7,8 @@
 module.exports = {
     props: {
         action: String,
-        method: String
+        method: String,
+        uriEncode: Boolean
     }, methods: {
         request: function (params) {
             const vm = this;
@@ -23,13 +24,18 @@ module.exports = {
             });
         }, submit: function () {
             let params = {};
-            this.$el.querySelectorAll('input,select,textarea').forEach(function(el){
+            let vm = this;
+            vm.$el.querySelectorAll('input,select,textarea').forEach(function(el){
                 if ((typeof el.attributes['disabled'] === 'undefined')
                     && (typeof el.attributes['name'] != 'undefined')
                 ) {
                     if ((el.type === 'radio' || el.type === 'checkbox') && !el.checked) return;
                     let val = el.value;
                     let name = el.attributes['name'].value;
+                    if(vm.uriEncode) {
+                        val = encodeURIComponent(val);
+                        name = encodeURIComponent(name);
+                    }
                     if (typeof params[name] === 'undefined') {
                         params[name] = val;
                     } else if (params[name] instanceof Array) {
@@ -39,7 +45,7 @@ module.exports = {
                     }
                 }
             });
-            this.request(params);
+            vm.request(params);
         }
     }
 }

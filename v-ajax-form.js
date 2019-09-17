@@ -10,7 +10,8 @@
     var VAjaxForm_vue_rollupPluginVue_script = {
         props: {
             action: String,
-            method: String
+            method: String,
+            uriEncode: Boolean
         }, methods: {
             request: function (params) {
                 var vm = this;
@@ -26,13 +27,19 @@
                 });
             }, submit: function () {
                 var params = {};
-                this.$el.querySelectorAll('input,select,textarea').forEach(function(el){
+                var vm = this;
+                window.test= vm;
+                vm.$el.querySelectorAll('input,select,textarea').forEach(function(el){
                     if ((typeof el.attributes['disabled'] === 'undefined')
                         && (typeof el.attributes['name'] != 'undefined')
                     ) {
                         if ((el.type === 'radio' || el.type === 'checkbox') && !el.checked) { return; }
                         var val = el.value;
                         var name = el.attributes['name'].value;
+                        if(vm.uriEncode) {
+                            val = encodeURIComponent(val);
+                            name = encodeURIComponent(name);
+                        }
                         if (typeof params[name] === 'undefined') {
                             params[name] = val;
                         } else if (params[name] instanceof Array) {
@@ -42,7 +49,7 @@
                         }
                     }
                 });
-                this.request(params);
+                vm.request(params);
             }
         }
     };
