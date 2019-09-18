@@ -123,11 +123,12 @@ v-ajax-form
 
 ### プロパティ
 
-|属性名|解説|
-|-------|----------|
-|action|非同期通信のリクエスト先|
-|method|非同期通信のHTTPメソッド|
-|*|formタグにコピーされます|
+|属性名|型|解説|
+|-------|----------|----------|
+|action|String|非同期通信のリクエスト先|
+|method|String|非同期通信のHTTPメソッド|
+|uri-encode|Boolean|リクエストするキーと値をencodeURIComponentでエンコードします|
+|*|String|formタグにコピーされます|
 
 ### イベント
 v-ajax-formタグはformタグにリプレースされ、formのsubmitのリスナーを非同期処理に置き換えます。
