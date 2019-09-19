@@ -125,11 +125,12 @@ v-ajax-form
 
 ### property
 
-|Attribute name|Explanation|
-|-------|----------|
-|action|Request destination of asynchronous communication|
-|method|HTTP method for asynchronous communication|
-|*|copied to form tag|
+|Attribute name|Type|Explanation|
+|-------|----------|----------|
+|action|String|Request destination of asynchronous communication|
+|method|String|HTTP method for asynchronous communication|
+|uri-encode|Boolean|Encode request parameter key and value with encodeURIComponent|
+|*(others)|String|copied to form tag|
 
 ### Event
 The v-ajax-form tag is replaced with the form tag, and the form submit listener is replaced with asynchronous processing.

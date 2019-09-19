@@ -127,8 +127,8 @@ v-ajax-form
 |-------|----------|----------|
 |action|String|非同期通信のリクエスト先|
 |method|String|非同期通信のHTTPメソッド|
-|uri-encode|Boolean|リクエストするキーと値をencodeURIComponentでエンコードします|
-|*|String|formタグにコピーされます|
+|uri-encode|Boolean|リクエストパラメータのキーと値をencodeURIComponentでエンコードします|
+|*(その他)|String|formタグにコピーされます|
 
 ### イベント
 v-ajax-formタグはformタグにリプレースされ、formのsubmitのリスナーを非同期処理に置き換えます。
