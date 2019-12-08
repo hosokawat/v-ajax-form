@@ -16,9 +16,19 @@
             request: function (params) {
                 var vm = this;
                 vm.$emit('start', params);
-                axios[vm.method](vm.action, {
-                    params: params
-                }).then(function (response) {
+                var ax_op2 = {};
+                var _method = vm.method.toLowerCase();
+                switch (vm.method) {
+                    case 'get':
+                        ax_op2 = {params: params};
+                        break;
+                    case 'post':
+                        ax_op2 = params;
+                        break;
+                }
+                axios[_method](vm.action,
+                    ax_op2
+                ).then(function (response) {
                     vm.$emit('receive', response);
                 }).catch(function (response) {
                     vm.$emit('fail', response);
@@ -28,7 +38,6 @@
             }, submit: function () {
                 var params = {};
                 var vm = this;
-                window.test= vm;
                 vm.$el.querySelectorAll('input,select,textarea').forEach(function(el){
                     if ((typeof el.attributes['disabled'] === 'undefined')
                         && (typeof el.attributes['name'] != 'undefined')

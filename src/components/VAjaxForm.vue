@@ -13,9 +13,19 @@ module.exports = {
         request: function (params) {
             const vm = this;
             vm.$emit('start', params);
-            axios[vm.method](vm.action, {
-                params: params
-            }).then(function (response) {
+            let ax_op2 = {};
+            let _method = vm.method.toLowerCase();
+            switch (vm.method) {
+                case 'get':
+                    ax_op2 = {params: params};
+                    break;
+                case 'post':
+                    ax_op2 = params;
+                    break;
+            }
+            axios[_method](vm.action,
+                ax_op2
+            ).then(function (response) {
                 vm.$emit('receive', response);
             }).catch(function (response) {
                 vm.$emit('fail', response);
