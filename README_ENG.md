@@ -38,7 +38,7 @@ Also download [axios](https://github.com/axios/axios).
 Paste the following code inside the head tag.
 ``` html
 <script src='https://cdn.jsdelivr.net/npm/axios@0.19.0/dist/axios.min.js'></script>
-<script src='https://cdn.jsdelivr.net/gh/hosokawat/v-ajax-form@v1.0.3/v-ajax-form.min.js'></script>
+<script src='https://cdn.jsdelivr.net/gh/hosokawat/v-ajax-form@v1.0.4/v-ajax-form.min.js'></script>
 ```
 
 ### npm
@@ -51,7 +51,7 @@ npm install v-ajax-form
 
 ## Sample code
 
-Information acquisition page for books. 
+Information acquisition page for books.
 
 
 [jsfiddle](https://jsfiddle.net/hosokawat/tfhn2cp3/)
