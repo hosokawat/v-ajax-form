@@ -2,81 +2,83 @@
 [![MIT License](http://img.shields.io/badge/license-MIT-blue.svg?style=flat)](LICENSE)
 [![npm version](https://badge.fury.io/js/v-ajax-form.svg)](https://badge.fury.io/js/v-ajax-form)
 
-**[ENGLISH TRANSLATE VERSION](README_ENG.md)**
+**[日本語版はこちら](README.md)**
 
-## はじめに
+## Introduction
 
-v-ajax-formは、Vue.jsのカスタムエレメントです。
-formタグを置き換えることで非同期通信処理を実現します。
-
-サーバからの応答はディスパッチされるformタグのイベントに、
-コールバックメソッドを設定することで処理することができます。
-
-HTMLと最低限のVue.jsを理解していれば、学習コストゼロで使えることを目指しました。
-
-## 背景
-近年のWebサービスに求められる要件では
-従来のページ遷移のみに頼った情報更新だけでは不十分であり、
-ページの一部のみの更新を行う非同期通信処理を使ったajaxを活用することを前提とする要件が当たり前のものとして求められるようになりました。
-
-しかし、HTMLが標準で備えていて最も手軽に入力値をサーバに送る機能であるFormタグはサーバとの通信の際にページ遷移を伴うものとなっています。
-
-非同期通信処理を保守性を維持した上で効率化する実装方法を検討した結果、
-Formタグと同じインターフェースで非同期通信処理を実現するVueのカスタムエレメントを実装して使うことが最適だと考えました。
-
-そのアイデアを実現し汎用的なものとして広く活用するために、このVue.jsプラグインを実装して公開しました。
-
-## インストール
-
-3つの方法を用意しています。
-通信に必要な実装はaxiosに移譲しています(餅は餅屋ということで)。合わせてロードしてください。
-
-### ダウンロード
-masterブランチの最新版をダウンロードしてください。
+v-ajax-form is a custom element of Vue.js. Asynchronous communication processing is realized by replacing the form tag.
 
 
-[axios](https://github.com/axios/axios)もダウンロードしてください。
+Responses from the server can be processed by setting a callback method in the dispatched form tag event.
+
+
+If you understand HTML and the minimum Vue.js, we aimed to use it at zero learning cost.
+
+## Background
+It is premised on using ajax that uses asynchronous communication processing that updates only a part of a page, and it is not enough to update information that relies only on conventional page transitions in the requirements required for Web services in recent years. Requirements are now taken for granted.
+
+
+However, the Form tag, which is the standard HTML feature that sends input values ​​to the server most easily, involves page transitions when communicating with the server.
+
+
+As a result of examining the implementation method to improve the efficiency of asynchronous communication processing while maintaining maintainability, I thought it was optimal to implement and use Vue custom elements that realize asynchronous communication processing with the same interface as the Form tag .
+
+
+This Vue.js plug-in was implemented and published to realize the idea and make it widely used as a general-purpose one.
+
+## Install
+
+Three methods are available. The implementation necessary for communication has been transferred to axios (One should go to specialists for the best results). Please load together.
+
+### Download
+Download the latest version of the master branch.
+
+
+Also download [axios](https://github.com/axios/axios).
 
 
 ### CDN
-headタグ内に次のコードを貼り付けてください。
+Paste the following code inside the head tag.
 ``` html
 <script src='https://cdn.jsdelivr.net/npm/axios@0.19.0/dist/axios.min.js'></script>
 <script src='https://cdn.jsdelivr.net/gh/hosokawat/v-ajax-form@v1.0.5/v-ajax-form.min.js'></script>
 ```
 
 ### npm
-axiosも一緒に落ちてきます。
+axios will download together.
+
 ``` bash
 npm install v-ajax-form
 ```
 
 
-## サンプルコード
+## Sample code
 
-本の情報取得ページです。
+Information acquisition page for books.
+
 
 [jsfiddle](https://jsfiddle.net/hosokawat/tfhn2cp3/)
 
-株式会社カーリル様(https://calil.jp) が提供している、
 
-openBDプロジェクトの「[書誌情報の取得API](https://openbd.jp)」をバックエンドに利用しました。
+[Bibliographic Information Acquisition API](https://openbd.jp) by The openBD project's  was used as the back end.
 
-この場を借りてお礼申し上げます。ありがとうございます。
 
-## 使い方
+I would like to take this moment to say thank you.
 
-**/request**に対してpostメソッドでparam1の値を送信するHTMLコードは次のように記述できます。
+## How to use
+
+The HTML code that sends the value of param1 to the ***/request*** with the post method can be written as follows:
 
 ``` html
 <form action=‘/request’ method=‘post’>
-    <input name=‘param1’ value=‘パラメータ1’>
-    <input type=‘submit’ value=‘送信’>
+    <input name=‘param1’ value=parameter1>
+    <input type=‘submit’ value=‘send’>
 </form>
 ```
-上記コードによるフォームは通信時に画面遷移を伴います。
+Forms with the above code are accompanied by screen transitions during communication.
 
-そして、**v-ajax-form**を利用すると、同様の条件で非同期通信を行うフォームを次のように記述できます。
+
+And using v-ajax-form, you can write a form that performs asynchronous communication under the same conditions as follows.
 
 ``` html
 <v-ajax-form action=‘/request’ method=‘post’>
@@ -85,9 +87,11 @@ openBDプロジェクトの「[書誌情報の取得API](https://openbd.jp)」�
 </v-ajax-form>
 ```
 
-上記コードでは非同期通信処理のサーバ応答を処理するコードが含まれていません。
+The above code does not include the code for processing the server response of asynchronous communication processing.
 
-サーバからの応答を処理するためのコールバック関数はイベントリスナーとして登録することができます。
+
+The callback function for processing the response from the server can be registered as an event listener.
+
 
 ``` html
 <v-ajax-form action=‘/request’ method=‘post’ @receive='receive'>
@@ -97,6 +101,7 @@ openBDプロジェクトの「[書誌情報の取得API](https://openbd.jp)」�
 ```
 
 ``` javascript
+
 methods: {
     receive: function(res){
         // print out server response
@@ -105,7 +110,8 @@ methods: {
 }
 ```
 
-クラスやID、もしくは任意の属性を設定することも可能です。
+class, ID, or any attribute can be set.
+
 ``` html
 <v-ajax-form action=‘/request’ method=‘post’ id=‘id1’ class=‘class1’ prop1=‘prop1’>
     <input name=‘param1’ value=‘パラメータ1’>
@@ -113,52 +119,52 @@ methods: {
 </v-ajax-form>
 ```
 
-全てVueのレンダリングでリプレースされるformタグにコピーされます。
+Everything is copied to the form tag that will be replaced by Vue rendering.
 
-## 仕様
+## Specification
 
-### エレメント名
-
+### Element
 v-ajax-form
 
-### プロパティ
+### property
 
-|属性名|型|解説|
+|Attribute name|Type|Explanation|
 |-------|----------|----------|
-|action|String|非同期通信のリクエスト先|
-|method|String|非同期通信のHTTPメソッド|
-|uri-encode|Boolean|リクエストパラメータのキーと値をencodeURIComponentでエンコードします|
-|*(その他)|String|formタグにコピーされます|
+|action|String|Request destination of asynchronous communication|
+|method|String|HTTP method for asynchronous communication|
+|uri-encode|Boolean|Encode request parameter key and value with encodeURIComponent|
+|*(others)|String|copied to form tag|
 
-### イベント
-v-ajax-formタグはformタグにリプレースされ、formのsubmitのリスナーを非同期処理に置き換えます。
+### Event
+The v-ajax-form tag is replaced with the form tag, and the form submit listener is replaced with asynchronous processing.
 
-非同期通信処理の進捗に伴い、次のイベントが順番にディスパッチされます。
 
-[start] -> [receive または fail] -> [done]
+As the asynchronous communication process progresses, the following events are dispatched in order.
 
-|イベント名|タイミング|パラメータ|
+[start] -> [receive or fail] -> [done]
+
+|Event name|Timing|Parameters|
 |-------|----------|----------|
-|start|通信の直前|リクエストパラメータ|
-|receive|通信成功後|リクエストパラメータ&レスポンス・リクエスト情報|
-|fail|通信失敗後|リクエストパラメータ&レスポンス・リクエスト情報|
-|done|通信処理の完了後|リクエストパラメータ|
+|start|Immediately before communication|Request parameters|
+|receive|After successful communication|Request parameter & response request information|
+|fail|After communication failure|Request parameter & response request information|
+|done|After communication processing is completed|Request parameters|
 
 
-### レンダリング仕様
-v-ajax-formはformタグにリプレースされ、全ての属性はformタグにコピーされます。
+### Rendering specification
+v-ajax-form is replaced with the form tag, and all attributes are copied to the form tag.
 
 **Before**
 ``` html
 <v-ajax-form action=‘/request’ method=‘post’ id=‘id1’ class=‘class1’ prop1=‘prop1’>
-    <input name=‘param1’ value=‘パラメータ1’>
-    <input type=‘submit’ value=‘送信’>
+    <input name=‘param1’ value='parameter1'>
+    <input type=‘submit’ value='send'>
 </v-ajax-form>
 ```
 **After**
 ``` html
 <form action=‘/request’ method=‘post’ id=‘id1’ class=‘class1’ prop1=‘prop1’>
-    <input name=‘param1’ value=‘パラメータ1’>
-    <input type=‘submit’ value=‘送信’>
+    <input name=‘param1’ value='parameter1'>
+    <input type=‘submit’ value='send'>
 </form>
 ```
