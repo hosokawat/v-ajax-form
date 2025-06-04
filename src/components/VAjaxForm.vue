@@ -4,7 +4,7 @@
     </form>
 </template>
 <script>
-module.exports = {
+export default {
     props: {
         action: String,
         method: String,
@@ -13,25 +13,38 @@ module.exports = {
         request: function (params) {
             const vm = this;
             vm.$emit('start', params);
-            let ax_op2 = {};
-            let _method = vm.method.toLowerCase();
-            switch (vm.method) {
-                case 'get':
-                    ax_op2 = {params: params};
-                    break;
-                case 'post':
-                    ax_op2 = params;
-                    break;
+            const method = vm.method.toUpperCase();
+            let url = vm.action;
+            const options = { method: method };
+            if (method === 'GET') {
+                const query = new URLSearchParams(params).toString();
+                if (query) {
+                    url += (url.indexOf('?') >= 0 ? '&' : '?') + query;
+                }
+            } else if (method === 'POST') {
+                options.headers = { 'Content-Type': 'application/x-www-form-urlencoded' };
+                options.body = new URLSearchParams(params);
+            } else {
+                options.headers = { 'Content-Type': 'application/json' };
+                options.body = JSON.stringify(params);
             }
-            axios[_method](vm.action,
-                ax_op2
-            ).then(function (response) {
-                vm.$emit('receive', response);
-            }).catch(function (response) {
-                vm.$emit('fail', response);
-            }).finally(function () {
-                vm.$emit('done', params);
-            });
+            fetch(url, options)
+                .then(async function (response) {
+                    if (!response.ok) throw response;
+                    let data;
+                    try {
+                        data = await response.clone().json();
+                    } catch (e) {
+                        data = await response.text();
+                    }
+                    vm.$emit('receive', { data: data, status: response.status, statusText: response.statusText, headers: response.headers });
+                })
+                .catch(function (response) {
+                    vm.$emit('fail', response);
+                })
+                .finally(function () {
+                    vm.$emit('done', params);
+                });
         }, submit: function () {
             let params = {};
             let vm = this;

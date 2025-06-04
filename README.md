@@ -28,24 +28,19 @@ This Vue.js plug-in was implemented and published to realize the idea and make i
 
 ## Install
 
-Three methods are available. The implementation necessary for communication has been transferred to axios (One should go to specialists for the best results). Please load together.
+Three methods are available.
 
 ### Download
 Download the latest version of the master branch.
 
 
-Also download [axios](https://github.com/axios/axios).
-
-
 ### CDN
 Paste the following code inside the head tag.
 ``` html
-<script src='https://cdn.jsdelivr.net/npm/axios@0.19.0/dist/axios.min.js'></script>
-<script src='https://cdn.jsdelivr.net/gh/hosokawat/v-ajax-form@v1.0.5/v-ajax-form.min.js'></script>
+<script src='https://cdn.jsdelivr.net/gh/hosokawat/v-ajax-form@v1.1.0/v-ajax-form.js'></script>
 ```
 
 ### npm
-axios will download together.
 
 ``` bash
 npm install v-ajax-form

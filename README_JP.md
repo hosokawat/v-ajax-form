@@ -29,24 +29,19 @@ Formタグと同じインターフェースで非同期通信処理を実現す�
 ## インストール
 
 3つの方法を用意しています。
-通信に必要な実装はaxiosに移譲しています(餅は餅屋ということで)。合わせてロードしてください。
+通信に必要な実装は内部で用意しています。
 
 ### ダウンロード
 masterブランチの最新版をダウンロードしてください。
 
 
-[axios](https://github.com/axios/axios)もダウンロードしてください。
-
-
 ### CDN
 headタグ内に次のコードを貼り付けてください。
 ``` html
-<script src='https://cdn.jsdelivr.net/npm/axios@0.19.0/dist/axios.min.js'></script>
-<script src='https://cdn.jsdelivr.net/gh/hosokawat/v-ajax-form@v1.0.5/v-ajax-form.min.js'></script>
+<script src='https://cdn.jsdelivr.net/gh/hosokawat/v-ajax-form@v1.1.0/v-ajax-form.js'></script>
 ```
 
 ### npm
-axiosも一緒に落ちてきます。
 ``` bash
 npm install v-ajax-form
 ```

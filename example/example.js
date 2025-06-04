@@ -1,10 +1,12 @@
-var app = new Vue({
-  el: '#app',
-  data: {
-    title: '',
-    auther: '',
-    message: '[init]'
-  }, methods: {
+const app = Vue.createApp({
+  data() {
+    return {
+      title: '',
+      auther: '',
+      message: '[init]'
+    }
+  },
+  methods: {
     start: function (params) {
       this.state_logging('start');
       console.log('1.start')
@@ -35,3 +37,6 @@ var app = new Vue({
     }
   }
 })
+
+app.use(VAjaxForm)
+app.mount('#app')
