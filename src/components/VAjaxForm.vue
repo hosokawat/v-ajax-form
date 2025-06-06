@@ -1,38 +1,75 @@
 <template>
-    <form v-bind="$attrs" :action="this.action" :method="this.method" @submit.prevent="submit">
+    <form v-bind="$attrs" :action="action" :method="method" @submit.prevent="submit">
         <slot></slot>
     </form>
 </template>
 <script>
-module.exports = {
+export default {
+    name: 'VAjaxForm',
     props: {
-        action: String,
-        method: String,
-        uriEncode: Boolean
-    }, methods: {
+        action: {
+            type: String,
+            required: true
+        },
+        method: {
+            type: String,
+            default: 'GET',
+            validator: (value) => ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'].includes(value.toUpperCase())
+        },
+        uriEncode: {
+            type: Boolean,
+            default: false
+        }
+    },
+    emits: ['start', 'receive', 'fail', 'done'],
+    methods: {
         request: function (params) {
             const vm = this;
             vm.$emit('start', params);
-            let ax_op2 = {};
-            let _method = vm.method.toLowerCase();
-            switch (vm.method) {
-                case 'get':
-                    ax_op2 = {params: params};
-                    break;
-                case 'post':
-                    ax_op2 = params;
-                    break;
+            
+            const method = vm.method.toUpperCase();
+            let url = vm.action;
+            const options = { method: method };
+            
+            if (method === 'GET') {
+                const query = new URLSearchParams(params).toString();
+                if (query) {
+                    url += (url.indexOf('?') >= 0 ? '&' : '?') + query;
+                }
+            } else if (method === 'POST') {
+                options.headers = { 'Content-Type': 'application/x-www-form-urlencoded' };
+                options.body = new URLSearchParams(params);
+            } else {
+                options.headers = { 'Content-Type': 'application/json' };
+                options.body = JSON.stringify(params);
             }
-            axios[_method](vm.action,
-                ax_op2
-            ).then(function (response) {
-                vm.$emit('receive', response);
-            }).catch(function (response) {
-                vm.$emit('fail', response);
-            }).finally(function () {
-                vm.$emit('done', params);
-            });
-        }, submit: function () {
+            
+            fetch(url, options)
+                .then(function (response) {
+                    if (!response.ok) {
+                        throw new Error('HTTP error! status: ' + response.status);
+                    }
+                    return response.text().then(function(text) {
+                        try {
+                            return JSON.parse(text);
+                        } catch (e) {
+                            return text;
+                        }
+                    }).then(function(data) {
+                        vm.$emit('receive', { 
+                            data: data, 
+                            status: response.status, 
+                            statusText: response.statusText
+                        });
+                    });
+                })
+                .catch(function (error) {
+                    vm.$emit('fail', error);
+                })
+                .finally(function () {
+                    vm.$emit('done', params);
+                });
+                }, submit: function () {
             let params = {};
             let vm = this;
             vm.$el.querySelectorAll('input,select,textarea').forEach(function(el){

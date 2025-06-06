@@ -8,6 +8,7 @@ export default {
     format: 'iife',
     sourcemap: true,
     file: 'v-ajax-form.js',
+    name: 'VAjaxForm'
   },
   plugins: [
     commonjs(),

@@ -1,2 +1,13 @@
 import VAjaxForm from './components/VAjaxForm.vue';
-Vue.component('VAjaxForm', VAjaxForm);
+
+const VAjaxFormPlugin = {
+  install(Vue) {
+    Vue.component('v-ajax-form', VAjaxForm);
+  }
+};
+
+if (typeof window !== 'undefined' && window.Vue) {
+  window.Vue.use(VAjaxFormPlugin);
+}
+
+export default VAjaxFormPlugin;

@@ -4,7 +4,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <script src="//cdnjs.cloudflare.com/ajax/libs/axios/0.19.0/axios.min.js"></script>
   <script src="//cdnjs.cloudflare.com/ajax/libs/vue/2.6.10/vue.min.js"></script>
   <script src="../v-ajax-form.js"></script>
   <title>v-ajax-form example</title>
@@ -14,7 +13,7 @@
     <h1>Bookサーチ</h1>
     <v-ajax-form action='https://api.openbd.jp/v1/get' method='get' @receive='receive' @done='done' @fail='fail'
       @start='start'>
-      <label for='isbn'>ISBN&nbsp;</label><input name='isbn' value='9784560090008'>
+      <label for='isbn'>ISBN&nbsp;</label><input id='isbn' name='isbn' value='9784560090008'>
       <input type="submit" value='調べる'><br>
     </v-ajax-form>
     <pre>

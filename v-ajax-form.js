@@ -1,4 +1,4 @@
-(function () {
+var VAjaxForm = (function () {
     'use strict';
 
     //
@@ -7,35 +7,72 @@
     //
     //
 
-    var VAjaxForm_vue_rollupPluginVue_script = {
+    var script = {
+        name: 'VAjaxForm',
         props: {
-            action: String,
-            method: String,
-            uriEncode: Boolean
-        }, methods: {
+            action: {
+                type: String,
+                required: true
+            },
+            method: {
+                type: String,
+                default: 'GET',
+                validator: function (value) { return ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'].includes(value.toUpperCase()); }
+            },
+            uriEncode: {
+                type: Boolean,
+                default: false
+            }
+        },
+        emits: ['start', 'receive', 'fail', 'done'],
+        methods: {
             request: function (params) {
                 var vm = this;
                 vm.$emit('start', params);
-                var ax_op2 = {};
-                var _method = vm.method.toLowerCase();
-                switch (vm.method) {
-                    case 'get':
-                        ax_op2 = {params: params};
-                        break;
-                    case 'post':
-                        ax_op2 = params;
-                        break;
+                
+                var method = vm.method.toUpperCase();
+                var url = vm.action;
+                var options = { method: method };
+                
+                if (method === 'GET') {
+                    var query = new URLSearchParams(params).toString();
+                    if (query) {
+                        url += (url.indexOf('?') >= 0 ? '&' : '?') + query;
+                    }
+                } else if (method === 'POST') {
+                    options.headers = { 'Content-Type': 'application/x-www-form-urlencoded' };
+                    options.body = new URLSearchParams(params);
+                } else {
+                    options.headers = { 'Content-Type': 'application/json' };
+                    options.body = JSON.stringify(params);
                 }
-                axios[_method](vm.action,
-                    ax_op2
-                ).then(function (response) {
-                    vm.$emit('receive', response);
-                }).catch(function (response) {
-                    vm.$emit('fail', response);
-                }).finally(function () {
-                    vm.$emit('done', params);
-                });
-            }, submit: function () {
+                
+                fetch(url, options)
+                    .then(function (response) {
+                        if (!response.ok) {
+                            throw new Error('HTTP error! status: ' + response.status);
+                        }
+                        return response.text().then(function(text) {
+                            try {
+                                return JSON.parse(text);
+                            } catch (e) {
+                                return text;
+                            }
+                        }).then(function(data) {
+                            vm.$emit('receive', { 
+                                data: data, 
+                                status: response.status, 
+                                statusText: response.statusText
+                            });
+                        });
+                    })
+                    .catch(function (error) {
+                        vm.$emit('fail', error);
+                    })
+                    .finally(function () {
+                        vm.$emit('done', params);
+                    });
+                    }, submit: function () {
                 var params = {};
                 var vm = this;
                 vm.$el.querySelectorAll('input,select,textarea').forEach(function(el){
@@ -149,7 +186,7 @@
     var normalizeComponent_1 = normalizeComponent;
 
     /* script */
-    var __vue_script__ = VAjaxForm_vue_rollupPluginVue_script;
+    var __vue_script__ = script;
 
     /* template */
     var __vue_render__ = function() {
@@ -160,7 +197,7 @@
         "form",
         _vm._b(
           {
-            attrs: { action: this.action, method: this.method },
+            attrs: { action: _vm.action, method: _vm.method },
             on: {
               submit: function($event) {
                 $event.preventDefault();
@@ -204,7 +241,17 @@
         undefined
       );
 
-    Vue.component('VAjaxForm', VAjaxForm);
+    var VAjaxFormPlugin = {
+      install: function install(Vue) {
+        Vue.component('v-ajax-form', VAjaxForm);
+      }
+    };
+
+    if (typeof window !== 'undefined' && window.Vue) {
+      window.Vue.use(VAjaxFormPlugin);
+    }
+
+    return VAjaxFormPlugin;
 
 }());
 //# sourceMappingURL=v-ajax-form.js.map
