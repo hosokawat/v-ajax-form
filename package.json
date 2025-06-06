@@ -1,6 +1,6 @@
 {
   "name": "v-ajax-form",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "vue.js component plug-in to make Form tag compatible with ajax request",
   "main": "v-ajax-form.js",
   "scripts": {
@@ -22,13 +22,13 @@
   },
   "homepage": "https://github.com/hosokawat/v-ajax-form#readme",
   "dependencies": {
-    "vue": "^2.6.10"
+    "vue": "^2.7.16"
   },
   "devDependencies": {
     "rollup": "^1.1.2",
     "rollup-plugin-buble": "^0.19.6",
     "rollup-plugin-commonjs": "^10.0.0",
-    "rollup-plugin-vue": "^5.0.0",
-    "vue-template-compiler": "^2.6.4"
+    "rollup-plugin-vue": "^5.1.9",
+    "vue-template-compiler": "^2.7.16"
   }
 }

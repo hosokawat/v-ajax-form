@@ -6,6 +6,7 @@
 <script>
 export default {
     name: 'VAjaxForm',
+    inheritAttrs: false,
     props: {
         action: {
             type: String,

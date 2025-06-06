@@ -36,7 +36,7 @@ masterブランチの最新版をダウンロードしてください。
 ### CDN
 headタグ内に次のコードを貼り付けてください。
 ``` html
-<script src='https://cdn.jsdelivr.net/gh/hosokawat/v-ajax-form@v1.0.5/v-ajax-form.min.js'></script>
+<script src='https://cdn.jsdelivr.net/gh/hosokawat/v-ajax-form@v1.0.7/v-ajax-form.min.js'></script>
 ```
 
 ### npm
