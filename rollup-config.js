@@ -1,4 +1,4 @@
-import vue from 'rollup-plugin-vue';
+import vue from '@vitejs/plugin-vue';
 import commonjs from '@rollup/plugin-commonjs';
 import terser from '@rollup/plugin-terser';
 
@@ -14,10 +14,7 @@ export default {
     }
   },
   plugins: [
-    vue({
-      css: true,
-      compileTemplate: true
-    }),
+    vue(),
     commonjs(),
     // 本番用の圧縮版も生成
     ...(process.env.NODE_ENV === 'production' ? [terser()] : [])

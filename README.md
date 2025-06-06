@@ -2,11 +2,13 @@
 [![MIT License](http://img.shields.io/badge/license-MIT-blue.svg?style=flat)](LICENSE)
 [![npm version](https://badge.fury.io/js/v-ajax-form.svg)](https://badge.fury.io/js/v-ajax-form)
 
-**[日本語版はこちら](README.md)**
+**[日本語版はこちら](README_JP.md)**
 
 ## Introduction
 
-v-ajax-form is a custom element of Vue.js. Asynchronous communication processing is realized by replacing the form tag.
+v-ajax-form is a custom element of Vue.js 3. Asynchronous communication processing is realized by replacing the form tag.
+
+**Note: This version supports Vue 3. For Vue 2 support, please use v1.0.7 or earlier.**
 
 
 Responses from the server can be processed by setting a callback method in the dispatched form tag event.

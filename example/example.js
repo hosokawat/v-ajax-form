@@ -1,10 +1,14 @@
-var app = new Vue({
-  el: '#app',
-  data: {
-    title: '',
-    auther: '',
-    message: '[init]'
-  }, methods: {
+const { createApp } = Vue;
+
+const app = createApp({
+  data() {
+    return {
+      title: '',
+      auther: '',
+      message: '[init]'
+    };
+  },
+  methods: {
     start: function (params) {
       this.state_logging('start');
       console.log('1.start')
@@ -19,19 +23,28 @@ var app = new Vue({
       }
       this.state_logging('success');
       console.log('2.success')
-    }, fail: function (e) {
+    }, 
+    fail: function (e) {
       this.title = 'リクエスト失敗';
       this.auther = '';
       this.state_logging('fail');
       console.log('2.fail')
-    }, done: function (e) {
+    }, 
+    done: function (e) {
       this.state_logging('done');
       console.log('3.done')
-    }, state_logging: function (state) {
+    }, 
+    state_logging: function (state) {
       if (this.message.length > 200) {
         this.message = ''
       }
       this.message += `-> [${state}]`;
     }
   }
-})
+});
+
+// プラグインを登録
+app.use(VAjaxForm);
+
+// アプリケーションをマウント
+app.mount('#app');
