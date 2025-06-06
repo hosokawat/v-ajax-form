@@ -1,22 +1,29 @@
 <!DOCTYPE html>
 <html lang="ja">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <script src="//cdnjs.cloudflare.com/ajax/libs/vue/3.4.27/vue.global.min.js"></script>
-  <script src="../v-ajax-form.js"></script>
-  <title>v-ajax-form example</title>
-</head>
-<body>
-  <div id="app">
-    <h1>Bookサーチ</h1>
-    <v-ajax-form action='https://api.openbd.jp/v1/get' method='get' @receive='receive' @done='done' @fail='fail'
-      @start='start'>
-      <label for='isbn'>ISBN&nbsp;</label><input id='isbn' name='isbn' value='9784560090008'>
-      <input type="submit" value='調べる'><br>
-    </v-ajax-form>
-    <pre>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <script src="//cdnjs.cloudflare.com/ajax/libs/vue/3.4.27/vue.global.min.js"></script>
+    <script src="../v-ajax-form.js"></script>
+    <title>v-ajax-form example</title>
+  </head>
+  <body>
+    <div id="app">
+      <h1>Bookサーチ</h1>
+      <v-ajax-form
+        action="https://api.openbd.jp/v1/get"
+        method="get"
+        @receive="receive"
+        @done="done"
+        @fail="fail"
+        @start="start"
+      >
+        <label for="isbn">ISBN&nbsp;</label
+        ><input id="isbn" name="isbn" value="9784560090008" />
+        <input type="submit" value="調べる" /><br />
+      </v-ajax-form>
+      <pre>
           キャッチャー・イン・ザ・ライ : 9784560090008
           星の王子様 : 9784102122044
           失われた世界 : 9784488608026
@@ -24,20 +31,19 @@
           サピエンス全史 : 9784309226712
           ゼロからトースターを作ってみた結果 : 9784102200025
       </pre>
-    <hr>
-    <div>タイトル：&nbsp;<span>{{title}}</span></div>
-    <div>著者：&nbsp;<span>{{auther}}</span></div>
-    <hr>
-    <div>state</div>
-    <div>{{message}}</div>
-    <hr>
-    <pre>
+      <hr />
+      <div>タイトル：&nbsp;<span>{{title}}</span></div>
+      <div>著者：&nbsp;<span>{{auther}}</span></div>
+      <hr />
+      <div>state</div>
+      <div>{{message}}</div>
+      <hr />
+      <pre>
         このページはバックエンドに、株式会社カーリル様(https://calil.jp)が提供している
         openBDプロジェクト「書誌情報の取得API」(https://openbd.jp)を利用しています。
         この場を借りてお礼申し上げます。ありがとうございます。
       </pre>
-  </div>
-  <script src="example.js"></script>
-</body>
-
+    </div>
+    <script src="example.js"></script>
+  </body>
 </html>

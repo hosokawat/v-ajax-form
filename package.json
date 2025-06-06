@@ -1,6 +1,6 @@
 {
   "name": "v-ajax-form",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "vue.js 3 component plug-in to make Form tag compatible with ajax request",
   "main": "v-ajax-form.js",
   "type": "module",
