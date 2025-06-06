@@ -1,5 +1,6 @@
 <template>
   <form
+    ref="formRef"
     v-bind="$attrs"
     :action="action"
     :method="method"
@@ -8,104 +9,117 @@
     <slot></slot>
   </form>
 </template>
-<script>
-export default {
+<script setup>
+import { ref } from "vue";
+
+const props = defineProps({
+  action: {
+    type: String,
+    required: true,
+  },
+  method: {
+    type: String,
+    default: "GET",
+    validator: (value) =>
+      ["GET", "POST", "PUT", "DELETE", "PATCH"].includes(value.toUpperCase()),
+  },
+  uriEncode: {
+    type: Boolean,
+    default: false,
+  },
+});
+
+const emit = defineEmits(["start", "receive", "fail", "done"]);
+
+defineOptions({
   name: "VAjaxForm",
   inheritAttrs: false,
-  props: {
-    action: {
-      type: String,
-      required: true,
-    },
-    method: {
-      type: String,
-      default: "GET",
-      validator: (value) =>
-        ["GET", "POST", "PUT", "DELETE", "PATCH"].includes(value.toUpperCase()),
-    },
-    uriEncode: {
-      type: Boolean,
-      default: false,
-    },
-  },
-  emits: ["start", "receive", "fail", "done"],
-  methods: {
-    request: async function (params) {
-      const vm = this;
-      vm.$emit("start", params);
+});
 
-      const method = vm.method.toUpperCase();
-      let url = vm.action;
-      const options = { method: method };
+// テンプレート参照をフォールバックとして用意
+const formRef = ref(null);
 
-      if (method === "GET") {
-        const query = new URLSearchParams(params).toString();
-        if (query) {
-          url += (url.indexOf("?") >= 0 ? "&" : "?") + query;
-        }
-      } else if (method === "POST") {
-        options.headers = {
-          "Content-Type": "application/x-www-form-urlencoded",
-        };
-        options.body = new URLSearchParams(params);
+const request = async (params) => {
+  emit("start", params);
+
+  const method = props.method.toUpperCase();
+  let url = props.action;
+  const options = { method: method };
+
+  if (method === "GET") {
+    const query = new URLSearchParams(params).toString();
+    if (query) {
+      url += (url.indexOf("?") >= 0 ? "&" : "?") + query;
+    }
+  } else if (method === "POST") {
+    options.headers = {
+      "Content-Type": "application/x-www-form-urlencoded",
+    };
+    options.body = new URLSearchParams(params);
+  } else {
+    options.headers = { "Content-Type": "application/json" };
+    options.body = JSON.stringify(params);
+  }
+
+  try {
+    const response = await fetch(url, options);
+
+    if (!response.ok) {
+      throw new Error("HTTP error! status: " + response.status);
+    }
+
+    const text = await response.text();
+    let data;
+    try {
+      data = JSON.parse(text);
+    } catch (e) {
+      data = text;
+    }
+
+    emit("receive", {
+      data: data,
+      status: response.status,
+      statusText: response.statusText,
+    });
+  } catch (error) {
+    emit("fail", error);
+  } finally {
+    emit("done", params);
+  }
+};
+
+const submit = () => {
+  const params = {};
+
+  const form = formRef.value;
+
+  if (!form) {
+    console.warn("VAjaxForm: Could not access form element");
+    return;
+  }
+
+  form.querySelectorAll("input,select,textarea").forEach((el) => {
+    if (
+      typeof el.attributes["disabled"] === "undefined" &&
+      typeof el.attributes["name"] != "undefined"
+    ) {
+      if ((el.type === "radio" || el.type === "checkbox") && !el.checked)
+        return;
+      let val = el.value;
+      let name = el.attributes["name"].value;
+      if (props.uriEncode) {
+        val = encodeURIComponent(val);
+        name = encodeURIComponent(name);
+      }
+      if (typeof params[name] === "undefined") {
+        params[name] = val;
+      } else if (params[name] instanceof Array) {
+        params[name].push(val);
       } else {
-        options.headers = { "Content-Type": "application/json" };
-        options.body = JSON.stringify(params);
+        params[name] = [params[name], val];
       }
-
-      try {
-        const response = await fetch(url, options);
-
-        if (!response.ok) {
-          throw new Error("HTTP error! status: " + response.status);
-        }
-
-        const text = await response.text();
-        let data;
-        try {
-          data = JSON.parse(text);
-        } catch (e) {
-          data = text;
-        }
-
-        vm.$emit("receive", {
-          data: data,
-          status: response.status,
-          statusText: response.statusText,
-        });
-      } catch (error) {
-        vm.$emit("fail", error);
-      } finally {
-        vm.$emit("done", params);
-      }
-    },
-    submit: function () {
-      let params = {};
-      let vm = this;
-      vm.$el.querySelectorAll("input,select,textarea").forEach(function (el) {
-        if (
-          typeof el.attributes["disabled"] === "undefined" &&
-          typeof el.attributes["name"] != "undefined"
-        ) {
-          if ((el.type === "radio" || el.type === "checkbox") && !el.checked)
-            return;
-          let val = el.value;
-          let name = el.attributes["name"].value;
-          if (vm.uriEncode) {
-            val = encodeURIComponent(val);
-            name = encodeURIComponent(name);
-          }
-          if (typeof params[name] === "undefined") {
-            params[name] = val;
-          } else if (params[name] instanceof Array) {
-            params[name].push(val);
-          } else {
-            params[name] = [params[name], val];
-          }
-        }
-      });
-      vm.request(params);
-    },
-  },
+    }
+  });
+  request(params);
 };
 </script>
