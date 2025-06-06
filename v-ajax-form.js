@@ -18,7 +18,7 @@ var VAjaxForm = (function () {
             method: {
                 type: String,
                 default: 'GET',
-                validator: function (value) { return ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'].includes(value.toUpperCase()); }
+                validator: (value) => ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'].includes(value.toUpperCase())
             },
             uriEncode: {
                 type: Boolean,
@@ -28,15 +28,15 @@ var VAjaxForm = (function () {
         emits: ['start', 'receive', 'fail', 'done'],
         methods: {
             request: function (params) {
-                var vm = this;
+                const vm = this;
                 vm.$emit('start', params);
                 
-                var method = vm.method.toUpperCase();
-                var url = vm.action;
-                var options = { method: method };
+                const method = vm.method.toUpperCase();
+                let url = vm.action;
+                const options = { method: method };
                 
                 if (method === 'GET') {
-                    var query = new URLSearchParams(params).toString();
+                    const query = new URLSearchParams(params).toString();
                     if (query) {
                         url += (url.indexOf('?') >= 0 ? '&' : '?') + query;
                     }
@@ -74,15 +74,15 @@ var VAjaxForm = (function () {
                         vm.$emit('done', params);
                     });
                     }, submit: function () {
-                var params = {};
-                var vm = this;
+                let params = {};
+                let vm = this;
                 vm.$el.querySelectorAll('input,select,textarea').forEach(function(el){
                     if ((typeof el.attributes['disabled'] === 'undefined')
                         && (typeof el.attributes['name'] != 'undefined')
                     ) {
-                        if ((el.type === 'radio' || el.type === 'checkbox') && !el.checked) { return; }
-                        var val = el.value;
-                        var name = el.attributes['name'].value;
+                        if ((el.type === 'radio' || el.type === 'checkbox') && !el.checked) return;
+                        let val = el.value;
+                        let name = el.attributes['name'].value;
                         if(vm.uriEncode) {
                             val = encodeURIComponent(val);
                             name = encodeURIComponent(name);
@@ -102,82 +102,19 @@ var VAjaxForm = (function () {
     };
 
     function normalizeComponent(template, style, script, scopeId, isFunctionalTemplate, moduleIdentifier /* server only */, shadowMode, createInjector, createInjectorSSR, createInjectorShadow) {
-        if (typeof shadowMode !== 'boolean') {
-            createInjectorSSR = createInjector;
-            createInjector = shadowMode;
-            shadowMode = false;
-        }
         // Vue.extend constructor export interop.
-        var options = typeof script === 'function' ? script.options : script;
+        const options = typeof script === 'function' ? script.options : script;
         // render functions
         if (template && template.render) {
             options.render = template.render;
             options.staticRenderFns = template.staticRenderFns;
             options._compiled = true;
-            // functional template
-            if (isFunctionalTemplate) {
-                options.functional = true;
-            }
-        }
-        // scopedId
-        if (scopeId) {
-            options._scopeId = scopeId;
-        }
-        var hook;
-        if (moduleIdentifier) {
-            // server build
-            hook = function (context) {
-                // 2.3 injection
-                context =
-                    context || // cached call
-                        (this.$vnode && this.$vnode.ssrContext) || // stateful
-                        (this.parent && this.parent.$vnode && this.parent.$vnode.ssrContext); // functional
-                // 2.2 with runInNewContext: true
-                if (!context && typeof __VUE_SSR_CONTEXT__ !== 'undefined') {
-                    context = __VUE_SSR_CONTEXT__;
-                }
-                // inject component styles
-                if (style) {
-                    style.call(this, createInjectorSSR(context));
-                }
-                // register component module identifier for async chunk inference
-                if (context && context._registeredComponents) {
-                    context._registeredComponents.add(moduleIdentifier);
-                }
-            };
-            // used by ssr in case component is cached and beforeCreate
-            // never gets called
-            options._ssrRegister = hook;
-        }
-        else if (style) {
-            hook = shadowMode
-                ? function (context) {
-                    style.call(this, createInjectorShadow(context, this.$root.$options.shadowRoot));
-                }
-                : function (context) {
-                    style.call(this, createInjector(context));
-                };
-        }
-        if (hook) {
-            if (options.functional) {
-                // register for functional component in vue file
-                var originalRender = options.render;
-                options.render = function renderWithStyleInjection(h, context) {
-                    hook.call(context);
-                    return originalRender(h, context);
-                };
-            }
-            else {
-                // inject component registration as beforeCreate hook
-                var existing = options.beforeCreate;
-                options.beforeCreate = existing ? [].concat(existing, hook) : [hook];
-            }
         }
         return script;
     }
 
     /* script */
-    var __vue_script__ = script;
+    const __vue_script__ = script;
 
     /* template */
     var __vue_render__ = function () {
@@ -208,13 +145,7 @@ var VAjaxForm = (function () {
     __vue_render__._withStripped = true;
 
       /* style */
-      var __vue_inject_styles__ = undefined;
-      /* scoped */
-      var __vue_scope_id__ = undefined;
-      /* module identifier */
-      var __vue_module_identifier__ = undefined;
-      /* functional template */
-      var __vue_is_functional_template__ = false;
+      const __vue_inject_styles__ = undefined;
       /* style inject */
       
       /* style inject SSR */
@@ -223,21 +154,13 @@ var VAjaxForm = (function () {
       
 
       
-      var __vue_component__ = /*#__PURE__*/normalizeComponent(
+      const __vue_component__ = /*#__PURE__*/normalizeComponent(
         { render: __vue_render__, staticRenderFns: __vue_staticRenderFns__ },
         __vue_inject_styles__,
-        __vue_script__,
-        __vue_scope_id__,
-        __vue_is_functional_template__,
-        __vue_module_identifier__,
-        false,
-        undefined,
-        undefined,
-        undefined
-      );
+        __vue_script__);
 
-    var VAjaxFormPlugin = {
-      install: function install(Vue) {
+    const VAjaxFormPlugin = {
+      install(Vue) {
         Vue.component('v-ajax-form', __vue_component__);
       }
     };
@@ -248,5 +171,5 @@ var VAjaxForm = (function () {
 
     return VAjaxFormPlugin;
 
-}());
+})();
 //# sourceMappingURL=v-ajax-form.js.map

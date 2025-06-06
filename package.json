@@ -1,19 +1,37 @@
 {
   "name": "v-ajax-form",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "description": "vue.js component plug-in to make Form tag compatible with ajax request",
   "main": "v-ajax-form.js",
+  "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "npm run build:iife",
-    "build:iife": "rollup -c rollup-config.js"
+    "build:iife": "rollup -c rollup-config.js",
+    "build:min": "NODE_ENV=production rollup -c rollup-config.js -o v-ajax-form.min.js",
+    "build:all": "npm run build && npm run build:min",
+    "dev": "rollup -c rollup-config.js -w",
+    "serve": "python3 -m http.server 8081 --directory example",
+    "lint": "echo \"No linting configured\"",
+    "clean": "rm -f v-ajax-form.js v-ajax-form.min.js v-ajax-form.js.map",
+    "prepare": "npm run build:all",
+    "prepublishOnly": "npm run clean && npm run build:all"
   },
   "repository": {
     "type": "git",
     "url": "git+https://hosokawat@github.com/hosokawat/v-ajax-form.git"
   },
   "keywords": [
-    "Vue.js"
+    "vue",
+    "vuejs",
+    "vue2", 
+    "component",
+    "form",
+    "ajax",
+    "http",
+    "plugin",
+    "frontend",
+    "javascript"
   ],
   "author": "Takahiro Hosokawa",
   "license": "MIT",
@@ -21,14 +39,26 @@
     "url": "https://github.com/hosokawat/v-ajax-form/issues"
   },
   "homepage": "https://github.com/hosokawat/v-ajax-form#readme",
-  "dependencies": {
-    "vue": "^2.7.16"
-  },
   "devDependencies": {
-    "rollup": "^1.1.2",
-    "rollup-plugin-buble": "^0.19.6",
-    "rollup-plugin-commonjs": "^10.0.0",
+    "@rollup/plugin-commonjs": "^28.0.3",
+    "@rollup/plugin-terser": "^0.4.4",
+    "rollup": "^4.41.2",
     "rollup-plugin-vue": "^5.1.9",
     "vue-template-compiler": "^2.7.16"
+  },
+  "peerDependencies": {
+    "vue": "^2.7.0"
+  },
+  "files": [
+    "v-ajax-form.js",
+    "v-ajax-form.min.js",
+    "v-ajax-form.js.map",
+    "src/",
+    "README.md",
+    "LICENSE"
+  ],
+  "engines": {
+    "node": ">=14.0.0",
+    "npm": ">=6.0.0"
   }
 }

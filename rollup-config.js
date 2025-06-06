@@ -1,6 +1,6 @@
 import vue from 'rollup-plugin-vue';
-import commonjs from 'rollup-plugin-commonjs';
-import buble from 'rollup-plugin-buble';
+import commonjs from '@rollup/plugin-commonjs';
+import terser from '@rollup/plugin-terser';
 
 export default {
   input: 'src/main.js',
@@ -8,11 +8,19 @@ export default {
     format: 'iife',
     sourcemap: true,
     file: 'v-ajax-form.js',
-    name: 'VAjaxForm'
+    name: 'VAjaxForm',
+    globals: {
+      vue: 'Vue'
+    }
   },
   plugins: [
+    vue({
+      css: true,
+      compileTemplate: true
+    }),
     commonjs(),
-    vue(),
-    buble(),
+    // 本番用の圧縮版も生成
+    ...(process.env.NODE_ENV === 'production' ? [terser()] : [])
   ],
+  external: ['vue'],
 };
