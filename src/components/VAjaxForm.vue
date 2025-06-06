@@ -30,7 +30,7 @@ export default {
   },
   emits: ["start", "receive", "fail", "done"],
   methods: {
-    request: function (params) {
+    request: async function (params) {
       const vm = this;
       vm.$emit("start", params);
 
@@ -53,34 +53,31 @@ export default {
         options.body = JSON.stringify(params);
       }
 
-      fetch(url, options)
-        .then(function (response) {
-          if (!response.ok) {
-            throw new Error("HTTP error! status: " + response.status);
-          }
-          return response
-            .text()
-            .then(function (text) {
-              try {
-                return JSON.parse(text);
-              } catch (e) {
-                return text;
-              }
-            })
-            .then(function (data) {
-              vm.$emit("receive", {
-                data: data,
-                status: response.status,
-                statusText: response.statusText,
-              });
-            });
-        })
-        .catch(function (error) {
-          vm.$emit("fail", error);
-        })
-        .finally(function () {
-          vm.$emit("done", params);
+      try {
+        const response = await fetch(url, options);
+
+        if (!response.ok) {
+          throw new Error("HTTP error! status: " + response.status);
+        }
+
+        const text = await response.text();
+        let data;
+        try {
+          data = JSON.parse(text);
+        } catch (e) {
+          data = text;
+        }
+
+        vm.$emit("receive", {
+          data: data,
+          status: response.status,
+          statusText: response.statusText,
         });
+      } catch (error) {
+        vm.$emit("fail", error);
+      } finally {
+        vm.$emit("done", params);
+      }
     },
     submit: function () {
       let params = {};
