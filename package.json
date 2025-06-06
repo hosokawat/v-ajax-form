@@ -5,7 +5,8 @@
   "main": "v-ajax-form.js",
   "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "vitest run",
+    "test:watch": "vitest",
     "build": "npm run build:iife",
     "build:iife": "rollup -c rollup-config.js",
     "build:min": "NODE_ENV=production rollup -c rollup-config.js -o v-ajax-form.min.js",
@@ -43,8 +44,12 @@
     "@rollup/plugin-commonjs": "^28.0.3",
     "@rollup/plugin-terser": "^0.4.4",
     "@vitejs/plugin-vue": "^5.0.0",
+    "@vue/compiler-sfc": "^3.4.0",
+    "@vue/test-utils": "^2.4.0",
+    "happy-dom": "^15.0.0",
     "rollup": "^4.41.2",
-    "@vue/compiler-sfc": "^3.4.0"
+    "vitest": "^2.0.0",
+    "vue": "^3.4.0"
   },
   "peerDependencies": {
     "vue": "^3.0.0"
@@ -59,6 +64,6 @@
   ],
   "engines": {
     "node": ">=14.0.0",
-    "npm": ">=6.0.0"
+    "npm": ">=16.0.0"
   }
 }
