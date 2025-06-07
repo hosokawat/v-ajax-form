@@ -37,29 +37,48 @@ var VAjaxForm = (function (vue) {
   // テンプレート参照をフォールバックとして用意
   const formRef = vue.ref(null);
 
+  // ファイル入力があるかどうかを判定
+  const hasFileInputs = vue.computed(() => {
+    return formRef.value?.querySelector('input[type="file"]') !== null;
+  });
+
   const request = async (params) => {
     emit("start", params);
 
-    const method = props.method.toUpperCase();
-    let url = props.action;
-    const options = { method: method };
-
-    if (method === "GET") {
-      const query = new URLSearchParams(params).toString();
-      if (query) {
-        url += (url.indexOf("?") >= 0 ? "&" : "?") + query;
-      }
-    } else if (method === "POST") {
-      options.headers = {
-        "Content-Type": "application/x-www-form-urlencoded",
-      };
-      options.body = new URLSearchParams(params);
-    } else {
-      options.headers = { "Content-Type": "application/json" };
-      options.body = JSON.stringify(params);
-    }
-
     try {
+      const method = props.method.toUpperCase();
+      let url = props.action;
+      const options = { method: method };
+
+      if (method === "GET") {
+        // ファイルアップロードの場合はGETメソッドは使用できない
+        if (params instanceof FormData) {
+          throw new Error("File uploads are not supported with GET method");
+        }
+        const query = new URLSearchParams(params).toString();
+        if (query) {
+          url += (url.indexOf("?") >= 0 ? "&" : "?") + query;
+        }
+      } else if (method === "POST") {
+        if (params instanceof FormData) {
+          // FormDataの場合はContent-Typeヘッダーを設定しない（ブラウザが自動設定）
+          options.body = params;
+        } else {
+          options.headers = {
+            "Content-Type": "application/x-www-form-urlencoded",
+          };
+          options.body = new URLSearchParams(params);
+        }
+      } else {
+        if (params instanceof FormData) {
+          // PUT, DELETE, PATCHでもFormDataをサポート
+          options.body = params;
+        } else {
+          options.headers = { "Content-Type": "application/json" };
+          options.body = JSON.stringify(params);
+        }
+      }
+
       const response = await fetch(url, options);
 
       if (!response.ok) {
@@ -86,39 +105,79 @@ var VAjaxForm = (function (vue) {
     }
   };
 
-  const submit = () => {
-    const params = {};
-
+  const collectFormData = () => {
     const form = formRef.value;
 
     if (!form) {
       console.warn("VAjaxForm: Could not access form element");
-      return;
+      return null;
     }
 
-    form.querySelectorAll("input,select,textarea").forEach((el) => {
-      if (
-        typeof el.attributes["disabled"] === "undefined" &&
-        typeof el.attributes["name"] != "undefined"
-      ) {
-        if ((el.type === "radio" || el.type === "checkbox") && !el.checked)
-          return;
-        let val = el.value;
-        let name = el.attributes["name"].value;
-        if (props.uriEncode) {
-          val = encodeURIComponent(val);
-          name = encodeURIComponent(name);
+    // ファイル入力がある場合はFormDataを使用
+    if (hasFileInputs.value) {
+      const formData = new FormData();
+      
+      form.querySelectorAll("input,select,textarea").forEach((el) => {
+        if (
+          typeof el.attributes["disabled"] === "undefined" &&
+          typeof el.attributes["name"] !== "undefined"
+        ) {
+          const name = el.attributes["name"].value;
+          
+          if (el.type === "file") {
+            // ファイル入力の処理
+            Array.from(el.files || []).forEach((file) => {
+              formData.append(name, file);
+            });
+          } else if ((el.type === "radio" || el.type === "checkbox") && !el.checked) {
+            return;
+          } else {
+            let val = el.value;
+            if (props.uriEncode) {
+              val = encodeURIComponent(val);
+            }
+            formData.append(props.uriEncode ? encodeURIComponent(name) : name, val);
+          }
         }
-        if (typeof params[name] === "undefined") {
-          params[name] = val;
-        } else if (params[name] instanceof Array) {
-          params[name].push(val);
-        } else {
-          params[name] = [params[name], val];
+      });
+      
+      return formData;
+    } else {
+      // 通常のフォームデータ処理
+      const params = {};
+      
+      form.querySelectorAll("input,select,textarea").forEach((el) => {
+        if (
+          typeof el.attributes["disabled"] === "undefined" &&
+          typeof el.attributes["name"] !== "undefined"
+        ) {
+          if ((el.type === "radio" || el.type === "checkbox") && !el.checked)
+            return;
+          let val = el.value;
+          let name = el.attributes["name"].value;
+          if (props.uriEncode) {
+            val = encodeURIComponent(val);
+            name = encodeURIComponent(name);
+          }
+          if (typeof params[name] === "undefined") {
+            params[name] = val;
+          } else if (params[name] instanceof Array) {
+            params[name].push(val);
+          } else {
+            params[name] = [params[name], val];
+          }
         }
-      }
-    });
-    request(params);
+      });
+      
+      return params;
+    }
+  };
+
+  const submit = async () => {
+    const formData = collectFormData();
+    if (formData !== null) {
+      await request(formData);
+    }
   };
 
   return (_ctx, _cache) => {
