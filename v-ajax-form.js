@@ -88,14 +88,14 @@ var VAjaxForm = (function (vue) {
 
   const submit = () => {
     const params = {};
-    
+
     const form = formRef.value;
-    
+
     if (!form) {
-      console.warn('VAjaxForm: Could not access form element');
+      console.warn("VAjaxForm: Could not access form element");
       return;
     }
-    
+
     form.querySelectorAll("input,select,textarea").forEach((el) => {
       if (
         typeof el.attributes["disabled"] === "undefined" &&
