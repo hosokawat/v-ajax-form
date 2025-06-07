@@ -282,4 +282,242 @@ describe("VAjaxForm", () => {
     expect(wrapper.emitted()).toHaveProperty("start");
     expect(wrapper.emitted().start[0]).toEqual([expectedData]);
   });
+
+  describe("ファイルアップロード", () => {
+    it("ファイル入力がある場合にFormDataが使用されること", async () => {
+      const action = "/upload";
+      const method = "POST";
+      const fileName = "test.txt";
+      const fileContent = "test file content";
+      const mockFile = new File([fileContent], fileName, { type: "text/plain" });
+
+      fetch.mockResolvedValueOnce({
+        ok: true,
+        status: 200,
+        statusText: "OK",
+        text: () => Promise.resolve('{"result": "uploaded"}'),
+      });
+
+      const wrapper = mount(VAjaxForm, {
+        props: {
+          action: action,
+          method: method,
+        },
+        slots: {
+          default: `
+            <input name="file" type="file">
+            <input name="description" value="test description">
+          `,
+        },
+      });
+
+      // ファイル入力にファイルを設定
+      const fileInput = wrapper.find('input[type="file"]');
+      Object.defineProperty(fileInput.element, 'files', {
+        value: [mockFile],
+        writable: false,
+      });
+
+      // フォーム送信をトリガー
+      await wrapper.find("form").trigger("submit.prevent");
+
+      // 非同期処理の完了を待機
+      await new Promise((resolve) => setTimeout(resolve, 0));
+
+      // fetchが正しいパラメータで呼ばれたことを確認
+      expect(fetch).toHaveBeenCalledWith(action, {
+        method: "POST",
+        body: expect.any(FormData),
+      });
+
+      // FormDataの内容を確認
+      const callArgs = fetch.mock.calls[0];
+      const formData = callArgs[1].body;
+      expect(formData).toBeInstanceOf(FormData);
+      expect(formData.get('file')).toBe(mockFile);
+      expect(formData.get('description')).toBe('test description');
+
+      // イベントが発火されたことを確認
+      expect(wrapper.emitted()).toHaveProperty("start");
+      expect(wrapper.emitted().start[0][0]).toBeInstanceOf(FormData);
+    });
+
+    it("複数ファイル選択が正しく処理されること", async () => {
+      const action = "/upload";
+      const method = "POST";
+      const file1 = new File(["content1"], "file1.txt", { type: "text/plain" });
+      const file2 = new File(["content2"], "file2.txt", { type: "text/plain" });
+
+      fetch.mockResolvedValueOnce({
+        ok: true,
+        status: 200,
+        statusText: "OK",
+        text: () => Promise.resolve('{"result": "uploaded"}'),
+      });
+
+      const wrapper = mount(VAjaxForm, {
+        props: {
+          action: action,
+          method: method,
+        },
+        slots: {
+          default: `<input name="files" type="file" multiple>`,
+        },
+      });
+
+      // ファイル入力に複数ファイルを設定
+      const fileInput = wrapper.find('input[type="file"]');
+      Object.defineProperty(fileInput.element, 'files', {
+        value: [file1, file2],
+        writable: false,
+      });
+
+      // フォーム送信をトリガー
+      await wrapper.find("form").trigger("submit.prevent");
+
+      // 非同期処理の完了を待機
+      await new Promise((resolve) => setTimeout(resolve, 0));
+
+      // fetchが正しいパラメータで呼ばれたことを確認
+      expect(fetch).toHaveBeenCalledWith(action, {
+        method: "POST",
+        body: expect.any(FormData),
+      });
+
+      // FormDataの内容を確認
+      const callArgs = fetch.mock.calls[0];
+      const formData = callArgs[1].body;
+      expect(formData).toBeInstanceOf(FormData);
+      expect(formData.getAll('files')).toEqual([file1, file2]);
+    });
+
+    it("ファイル入力とuriEncodeが併用できること", async () => {
+      const action = "/upload";
+      const method = "POST";
+      const mockFile = new File(["content"], "file.txt", { type: "text/plain" });
+      const testValue = "test value";
+
+      fetch.mockResolvedValueOnce({
+        ok: true,
+        status: 200,
+        statusText: "OK",
+        text: () => Promise.resolve('{"result": "uploaded"}'),
+      });
+
+      const wrapper = mount(VAjaxForm, {
+        props: {
+          action: action,
+          method: method,
+          uriEncode: true,
+        },
+        slots: {
+          default: `
+            <input name="file" type="file">
+            <input name="test param" value="${testValue}">
+          `,
+        },
+      });
+
+      // ファイル入力にファイルを設定
+      const fileInput = wrapper.find('input[type="file"]');
+      Object.defineProperty(fileInput.element, 'files', {
+        value: [mockFile],
+        writable: false,
+      });
+
+      // フォーム送信をトリガー
+      await wrapper.find("form").trigger("submit.prevent");
+
+      // 非同期処理の完了を待機
+      await new Promise((resolve) => setTimeout(resolve, 0));
+
+      // FormDataの内容を確認
+      const callArgs = fetch.mock.calls[0];
+      const formData = callArgs[1].body;
+      expect(formData).toBeInstanceOf(FormData);
+      expect(formData.get('file')).toBe(mockFile);
+      // uriEncodeが適用されていることを確認
+      expect(formData.get('test%20param')).toBe(encodeURIComponent(testValue));
+    });
+
+    it("GETメソッドでファイルアップロードを試行するとエラーになること", async () => {
+      const action = "/upload";
+      const method = "GET";
+      const mockFile = new File(["content"], "file.txt", { type: "text/plain" });
+
+      const wrapper = mount(VAjaxForm, {
+        props: {
+          action: action,
+          method: method,
+        },
+        slots: {
+          default: `<input name="file" type="file">`,
+        },
+      });
+
+      // ファイル入力にファイルを設定
+      const fileInput = wrapper.find('input[type="file"]');
+      Object.defineProperty(fileInput.element, 'files', {
+        value: [mockFile],
+        writable: false,
+      });
+
+      // フォーム送信をトリガー
+      await wrapper.find("form").trigger("submit.prevent");
+
+      // 非同期処理の完了を待機
+      await new Promise((resolve) => setTimeout(resolve, 0));
+
+      // failイベントが発火されることを確認
+      expect(wrapper.emitted()).toHaveProperty("fail");
+      expect(wrapper.emitted().fail[0][0].message).toBe("File uploads are not supported with GET method");
+    });
+
+    it("PUT/DELETE/PATCHメソッドでもファイルアップロードが動作すること", async () => {
+      const methods = ["PUT", "DELETE", "PATCH"];
+      
+      for (const method of methods) {
+        const action = `/upload-${method.toLowerCase()}`;
+        const mockFile = new File(["content"], "file.txt", { type: "text/plain" });
+
+        fetch.mockResolvedValueOnce({
+          ok: true,
+          status: 200,
+          statusText: "OK",
+          text: () => Promise.resolve('{"result": "success"}'),
+        });
+
+        const wrapper = mount(VAjaxForm, {
+          props: {
+            action: action,
+            method: method,
+          },
+          slots: {
+            default: `<input name="file" type="file">`,
+          },
+        });
+
+        // ファイル入力にファイルを設定
+        const fileInput = wrapper.find('input[type="file"]');
+        Object.defineProperty(fileInput.element, 'files', {
+          value: [mockFile],
+          writable: false,
+        });
+
+        // フォーム送信をトリガー
+        await wrapper.find("form").trigger("submit.prevent");
+
+        // 非同期処理の完了を待機
+        await new Promise((resolve) => setTimeout(resolve, 0));
+
+        // fetchが正しいパラメータで呼ばれたことを確認
+        expect(fetch).toHaveBeenCalledWith(action, {
+          method: method,
+          body: expect.any(FormData),
+        });
+
+        fetch.mockClear();
+      }
+    });
+  });
 });
