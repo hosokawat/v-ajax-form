@@ -48,7 +48,7 @@
     "@vue/test-utils": "^2.4.0",
     "happy-dom": "^15.0.0",
     "rollup": "^4.41.2",
-    "vitest": "^2.0.0",
+    "vitest": "^3.2.2",
     "vue": "^3.4.0"
   },
   "peerDependencies": {
