@@ -9,27 +9,31 @@
     <slot></slot>
   </form>
 </template>
-<script setup>
+<script setup lang="ts">
 import { ref, computed } from "vue";
 
-const props = defineProps({
-  action: {
-    type: String,
-    required: true,
-  },
-  method: {
-    type: String,
-    default: "GET",
-    validator: (value) =>
-      ["GET", "POST", "PUT", "DELETE", "PATCH"].includes(value.toUpperCase()),
-  },
-  uriEncode: {
-    type: Boolean,
-    default: false,
-  },
+type HttpMethod = "GET" | "POST" | "PUT" | "DELETE" | "PATCH";
+
+interface Props {
+  action: string;
+  method?: HttpMethod;
+  uriEncode?: boolean;
+}
+const props = withDefaults(defineProps<Props>(), {
+  method: "GET",
+  uriEncode: false,
 });
 
-const emit = defineEmits(["start", "receive", "fail", "done"]);
+const emit = defineEmits<{
+  (e: "start", params: Record<string, any> | FormData): void;
+  (e: "receive", payload: {
+    data: any;
+    status: number;
+    statusText: string;
+  }): void;
+  (e: "fail", error: unknown): void;
+  (e: "done", params: Record<string, any> | FormData): void;
+}>();
 
 defineOptions({
   name: "VAjaxForm",
@@ -37,14 +41,16 @@ defineOptions({
 });
 
 // テンプレート参照をフォールバックとして用意
-const formRef = ref(null);
+const formRef = ref<HTMLFormElement | null>(null);
 
 // ファイル入力があるかどうかを判定
 const hasFileInputs = computed(() => {
   return formRef.value?.querySelector('input[type="file"]') !== null;
 });
 
-const request = async (params) => {
+const request = async (
+  params: Record<string, any> | FormData
+): Promise<void> => {
   emit("start", params);
 
   try {
@@ -107,7 +113,7 @@ const request = async (params) => {
   }
 };
 
-const collectFormData = () => {
+const collectFormData = (): Record<string, any> | FormData | null => {
   const form = formRef.value;
 
   if (!form) {
@@ -146,7 +152,7 @@ const collectFormData = () => {
     return formData;
   } else {
     // 通常のフォームデータ処理
-    const params = {};
+    const params: Record<string, any> = {};
     
     form.querySelectorAll("input,select,textarea").forEach((el) => {
       if (
@@ -175,7 +181,7 @@ const collectFormData = () => {
   }
 };
 
-const submit = async () => {
+const submit = async (): Promise<void> => {
   const formData = collectFormData();
   if (formData !== null) {
     await request(formData);
