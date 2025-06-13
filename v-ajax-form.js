@@ -1,51 +1,46 @@
-(function () {
+var VAjaxForm = (function (vue, axios) {
     'use strict';
 
-    //
-    //
-    //
-    //
-    //
-
-    var VAjaxForm_vue_rollupPluginVue_script = {
+    const TARGET_TAGS = ['input','select','textarea'];
+    var script = vue.defineComponent({
+        name: 'VAjaxForm',
         props: {
             action: String,
             method: String,
             uriEncode: Boolean
         }, methods: {
-            request: function (params) {
-                var vm = this;
-                vm.$emit('start', params);
-                var ax_op2 = {};
-                var _method = vm.method.toLowerCase();
-                switch (vm.method) {
+            request(params) {
+                this.$emit('start', params);
+                let axiosRequestConfig = {};
+                let _method = this.method.toLowerCase();
+                switch (this.method) {
                     case 'get':
-                        ax_op2 = {params: params};
+                        axiosRequestConfig = {params: params};
                         break;
                     case 'post':
-                        ax_op2 = params;
+                        axiosRequestConfig = params;
                         break;
                 }
-                axios[_method](vm.action,
-                    ax_op2
-                ).then(function (response) {
-                    vm.$emit('receive', response);
-                }).catch(function (response) {
-                    vm.$emit('fail', response);
-                }).finally(function () {
-                    vm.$emit('done', params);
-                });
-            }, submit: function () {
-                var params = {};
-                var vm = this;
-                vm.$el.querySelectorAll('input,select,textarea').forEach(function(el){
+                axios[_method](this.action, axiosRequestConfig)
+                    .then((response) => {
+                        this.$emit('receive', response);
+                    })
+                    .catch((response) => {
+                        this.$emit('fail', response);
+                    })
+                    .finally(() => {
+                        this.$emit('done', params);
+                    });
+            }, submit() {
+                let params = {};
+                this.$el.querySelectorAll(TARGET_TAGS.join(",")).forEach((el) => {
                     if ((typeof el.attributes['disabled'] === 'undefined')
                         && (typeof el.attributes['name'] != 'undefined')
                     ) {
-                        if ((el.type === 'radio' || el.type === 'checkbox') && !el.checked) { return; }
-                        var val = el.value;
-                        var name = el.attributes['name'].value;
-                        if(vm.uriEncode) {
+                        if ((el.type === 'radio' || el.type === 'checkbox') && !el.checked) return;
+                        let val = el.value;
+                        let name = el.attributes['name'].value;
+                        if(this.uriEncode) {
                             val = encodeURIComponent(val);
                             name = encodeURIComponent(name);
                         }
@@ -58,153 +53,27 @@
                         }
                     }
                 });
-                vm.request(params);
+                this.request(params);
             }
         }
-    };
+    });
 
-    function normalizeComponent(template, style, script, scopeId, isFunctionalTemplate, moduleIdentifier
-    /* server only */
-    , shadowMode, createInjector, createInjectorSSR, createInjectorShadow) {
-      if (typeof shadowMode !== 'boolean') {
-        createInjectorSSR = createInjector;
-        createInjector = shadowMode;
-        shadowMode = false;
-      } // Vue.extend constructor export interop.
+    const _hoisted_1 = ["action", "method"];
 
-
-      var options = typeof script === 'function' ? script.options : script; // render functions
-
-      if (template && template.render) {
-        options.render = template.render;
-        options.staticRenderFns = template.staticRenderFns;
-        options._compiled = true; // functional template
-
-        if (isFunctionalTemplate) {
-          options.functional = true;
-        }
-      } // scopedId
-
-
-      if (scopeId) {
-        options._scopeId = scopeId;
-      }
-
-      var hook;
-
-      if (moduleIdentifier) {
-        // server build
-        hook = function hook(context) {
-          // 2.3 injection
-          context = context || // cached call
-          this.$vnode && this.$vnode.ssrContext || // stateful
-          this.parent && this.parent.$vnode && this.parent.$vnode.ssrContext; // functional
-          // 2.2 with runInNewContext: true
-
-          if (!context && typeof __VUE_SSR_CONTEXT__ !== 'undefined') {
-            context = __VUE_SSR_CONTEXT__;
-          } // inject component styles
-
-
-          if (style) {
-            style.call(this, createInjectorSSR(context));
-          } // register component module identifier for async chunk inference
-
-
-          if (context && context._registeredComponents) {
-            context._registeredComponents.add(moduleIdentifier);
-          }
-        }; // used by ssr in case component is cached and beforeCreate
-        // never gets called
-
-
-        options._ssrRegister = hook;
-      } else if (style) {
-        hook = shadowMode ? function () {
-          style.call(this, createInjectorShadow(this.$root.$options.shadowRoot));
-        } : function (context) {
-          style.call(this, createInjector(context));
-        };
-      }
-
-      if (hook) {
-        if (options.functional) {
-          // register for functional component in vue file
-          var originalRender = options.render;
-
-          options.render = function renderWithStyleInjection(h, context) {
-            hook.call(context);
-            return originalRender(h, context);
-          };
-        } else {
-          // inject component registration as beforeCreate hook
-          var existing = options.beforeCreate;
-          options.beforeCreate = existing ? [].concat(existing, hook) : [hook];
-        }
-      }
-
-      return script;
+    function render(_ctx, _cache, $props, $setup, $data, $options) {
+      return (vue.openBlock(), vue.createElementBlock("form", vue.mergeProps(_ctx.$attrs, {
+        action: this.action,
+        method: this.method,
+        onSubmit: _cache[0] || (_cache[0] = vue.withModifiers((...args) => (_ctx.submit && _ctx.submit(...args)), ["prevent"]))
+      }), [
+        vue.renderSlot(_ctx.$slots, "default")
+      ], 16 /* FULL_PROPS */, _hoisted_1))
     }
 
-    var normalizeComponent_1 = normalizeComponent;
+    script.render = render;
+    script.__file = "src/components/VAjaxForm.vue";
 
-    /* script */
-    var __vue_script__ = VAjaxForm_vue_rollupPluginVue_script;
+    return script;
 
-    /* template */
-    var __vue_render__ = function() {
-      var _vm = this;
-      var _h = _vm.$createElement;
-      var _c = _vm._self._c || _h;
-      return _c(
-        "form",
-        _vm._b(
-          {
-            attrs: { action: this.action, method: this.method },
-            on: {
-              submit: function($event) {
-                $event.preventDefault();
-                return _vm.submit($event)
-              }
-            }
-          },
-          "form",
-          _vm.$attrs,
-          false
-        ),
-        [_vm._t("default")],
-        2
-      )
-    };
-    var __vue_staticRenderFns__ = [];
-    __vue_render__._withStripped = true;
-
-      /* style */
-      var __vue_inject_styles__ = undefined;
-      /* scoped */
-      var __vue_scope_id__ = undefined;
-      /* module identifier */
-      var __vue_module_identifier__ = undefined;
-      /* functional template */
-      var __vue_is_functional_template__ = false;
-      /* style inject */
-      
-      /* style inject SSR */
-      
-
-      
-      var VAjaxForm = normalizeComponent_1(
-        { render: __vue_render__, staticRenderFns: __vue_staticRenderFns__ },
-        __vue_inject_styles__,
-        __vue_script__,
-        __vue_scope_id__,
-        __vue_is_functional_template__,
-        __vue_module_identifier__,
-        undefined,
-        undefined
-      );
-
-    Vue.component('VAjaxForm', VAjaxForm);
-
-}());
+})(Vue, axios);
 //# sourceMappingURL=v-ajax-form.js.map

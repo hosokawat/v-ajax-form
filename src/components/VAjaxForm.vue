@@ -4,45 +4,50 @@
     </form>
 </template>
 <script>
-module.exports = {
+import { defineComponent } from 'vue';
+import axios from 'axios';
+
+const TARGET_TAGS = ['input','select','textarea'];
+const CHECK_ELEMENTS = ['radio', 'checkbox'];
+export default defineComponent({
+    name: 'VAjaxForm',
     props: {
         action: String,
         method: String,
         uriEncode: Boolean
     }, methods: {
-        request: function (params) {
-            const vm = this;
-            vm.$emit('start', params);
-            let ax_op2 = {};
-            let _method = vm.method.toLowerCase();
-            switch (vm.method) {
+        request(params) {
+            this.$emit('start', params);
+            let axiosRequestConfig = {};
+            let _method = this.method.toLowerCase();
+            switch (this.method) {
                 case 'get':
-                    ax_op2 = {params: params};
+                    axiosRequestConfig = {params: params};
                     break;
                 case 'post':
-                    ax_op2 = params;
+                    axiosRequestConfig = params;
                     break;
             }
-            axios[_method](vm.action,
-                ax_op2
-            ).then(function (response) {
-                vm.$emit('receive', response);
-            }).catch(function (response) {
-                vm.$emit('fail', response);
-            }).finally(function () {
-                vm.$emit('done', params);
-            });
-        }, submit: function () {
+            axios[_method](this.action, axiosRequestConfig)
+                .then((response) => {
+                    this.$emit('receive', response);
+                })
+                .catch((response) => {
+                    this.$emit('fail', response);
+                })
+                .finally(() => {
+                    this.$emit('done', params);
+                });
+        }, submit() {
             let params = {};
-            let vm = this;
-            vm.$el.querySelectorAll('input,select,textarea').forEach(function(el){
+            this.$el.querySelectorAll(TARGET_TAGS.join(",")).forEach((el) => {
                 if ((typeof el.attributes['disabled'] === 'undefined')
                     && (typeof el.attributes['name'] != 'undefined')
                 ) {
-                    if ((el.type === 'radio' || el.type === 'checkbox') && !el.checked) return;
+                    if (CHECK_ELEMENTS.includes(el.type) && !el.checked) return;
                     let val = el.value;
                     let name = el.attributes['name'].value;
-                    if(vm.uriEncode) {
+                    if(this.uriEncode) {
                         val = encodeURIComponent(val);
                         name = encodeURIComponent(name);
                     }
@@ -55,8 +60,8 @@ module.exports = {
                     }
                 }
             });
-            vm.request(params);
+            this.request(params);
         }
     }
-}
+});
 </script>

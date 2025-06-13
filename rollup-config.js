@@ -1,6 +1,6 @@
 import vue from 'rollup-plugin-vue';
-import commonjs from 'rollup-plugin-commonjs';
-import buble from 'rollup-plugin-buble';
+import { nodeResolve } from '@rollup/plugin-node-resolve';
+import commonjs from '@rollup/plugin-commonjs';
 
 export default {
   input: 'src/main.js',
@@ -8,10 +8,21 @@ export default {
     format: 'iife',
     sourcemap: true,
     file: 'v-ajax-form.js',
+    name: 'VAjaxForm',
+    globals: {
+      vue: 'Vue',
+      axios: 'axios'
+    }
   },
+  external: ['vue', 'axios'],
   plugins: [
-    commonjs(),
-    vue(),
-    buble(),
+    vue({
+      target: 'browser',
+      preprocessStyles: false
+    }),
+    nodeResolve({
+      browser: true
+    }),
+    commonjs()
   ],
 };
